@@ -1,0 +1,16 @@
+body {
+	background-color: #ffffff !important;
+	color: #333333 !important;
+}
+
+.bg-primary {
+	background-color: #0275d8 !important;
+}
+
+.navbar-inverse .navbar-nav .nav-link {
+	color: #ededed !important;
+}
+
+.navbar-inverse .nav-pills .nav-link {
+	color: #ededed !important;
+}

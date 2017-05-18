@@ -1,0 +1,167 @@
+<transition name="fade">
+<div id="email-builder" v-if="!loading">
+    <div class="email-builder-preview-actions" :class="{preview: preview}">
+        <div class="md-btn-group">
+            <button class="md-btn md-btn-danger" @click="preview = false">Close preview</button>
+            <button class="md-btn md-btn-success" v-if="hasChanges()" @click="saveEmailTemplate()">Save email</button>
+        </div>
+    </div>
+    <div class="email-builder-header" :class="{preview: preview}">
+        <div class="email-builder-header-actions">
+            <!--<div class="md-btn-group">-->
+                <!--<button class="md-btn md-btn-flat md-btn-flat-danger md-btn-small" :class="{disabled: currentLanguage == 'en'}" @click="changeLanguage('en')">En</button>-->
+                <!--<button class="md-btn md-btn-flat md-btn-flat-danger md-btn-small" :class="{disabled: currentLanguage == 'ru'}" @click="changeLanguage('ru')">Ru</button>-->
+            <!--</div>-->
+        </div>
+
+        <div class="email-builder-header-actions">
+            <div class="md-btn-group">
+                <i class="actions md-icon material-icons close md-color-red-600" :class="{disabled: !currentElement.type}" title="Close Settings" @click="editElement()">close</i>
+                <i class="actions md-icon material-icons save md-color-green-600" title="Save Postcard" :class="{disabled: !hasChanges()}" @click="hasChanges() && saveEmailTemplate()">save</i>
+                <i class="actions md-icon material-icons" title="Postcard Settings" @click="editElement('emailSettings')">settings</i>
+            </div>
+
+            <div class="md-btn-group">
+                <button class="md-btn md-btn-success" @click="previewEmail()">
+                    <i class="material-icons">remove_red_eye</i>
+                    Preview
+                </button>
+                <button class="md-btn md-btn-primary" @click="importJson()">
+                    <i class="material-icons">undo</i>
+                    Import JSON
+                </button>
+                <button class="md-btn md-btn-primary" @click="exportJson()">
+                    <i class="material-icons">redo</i>
+                    Export JSON
+                </button>
+                <button class="md-btn md-btn-primary" @click="exportEmail()">
+                    <i class="material-icons">redo</i>
+                    Export HTML
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="email-builder-content">
+        <div class="md-card" :class="{preview: preview}">
+            <div class="md-card-content elements-list">
+                <draggable :list="elements" :options="{group: { name: 'people', pull: 'clone', put: false }, sort: false, dragClass: 'drag-element'}" :clone="clone" element="ul" class="md-list md-list-addon" ref="elements">
+                    <li v-for="element in elements" :data-type="element.type">
+                        <div class="md-list-addon-element">
+                            <i class="material-icons" v-html="element.icon" :title="element.primary_head"></i>
+                        </div>
+                    </li>
+                </draggable>
+            </div>
+        </div>
+        <div position-relative :class="{configured: !!currentElement.type, preview: preview}">
+            <div class="builder" :style="Email.emailSettings.options">
+                <draggable class="email-container" :class="{empty: !Email.elements.length}" data-empty-template="Drag and drop elements here" :list="Email.elements" :options="{group: {name: 'people', put: true}, sort: true, handle: 'i.actions.move'}" ref="emailElements">
+                    <div class="builder-element" :class="{selected: currentElement.id == element.id}" v-for="element in Email.elements" :id="element.id">
+                        <component :element="element" :is="element.component"></component>
+                        <i v-if="currentElement != element" class="actions edit md-icon material-icons" title="Edit element" @click="editElement(element.id)">edit</i>
+                        <i class="actions delete md-icon material-icons" title="Delete element" @click="removeElement(element)">delete</i>
+                        <i class="actions clone md-icon material-icons" title="Clone element" @click="cloneElement(element)">content_copy</i>
+                        <i v-if="Email.elements.length > 1" title="Move element" class="actions move md-icon material-icons">drag_handle</i>
+                    </div>
+                </draggable>
+            </div>
+        </div>
+        <div class="md-card" :class="{empty: !currentElement.type || preview}">
+            <div class="md-card-content">
+                <form action="#" onsubmit="return false">
+                    <div v-for="(option, key, index) in currentElement.options" v-if="currentElement.type && currentElement.type != 'emailSettings'" class="email-builder-element-edit-field">
+
+                        <!--<div v-if="key.search('Hide') > -1" class="form-row color-inputs">-->
+                            <!--<label for="builder_el_o_image_hide" class="md-label">{{key | makeTitle}}</label>-->
+                            <!--<input id="builder_el_o_image_hide" type="checkbox" v-model="currentElement.options[key]" />-->
+                            <!--<br>-->
+                        <!--</div>-->
+
+                        <div v-if="key.indexOf('image') > -1 && key.search('Hide') == -1 && !currentElement.options[key + 'Hide']" class="form-row">
+                            <label for="builder_el_o_image_url" class="md-label">Image URL</label>
+                            <input id="builder_el_o_image_url" type="text" class="md-input" v-md-input v-input-file-upload v-model="currentElement.options[key]" />
+                        </div>
+
+                        <div v-if="key.substring(0, 4) == 'text'" class="form-row textarea">
+                            <label :for="'builder_el_text_' + key" class="md-label">Text</label>
+                            <textarea :id="'builder_el_text_' + key" v-tinymce-editor v-model="currentElement.options[key]"></textarea>
+                        </div>
+
+                        <div v-if="key.substring(0, 5) == 'width'" class="form-row">
+                            <label for="builder_el_o_width" class="md-label">Image Width</label>
+                            <input id="builder_el_o_width" type="text" class="md-input" v-md-input v-model="currentElement.options[key]" />
+                        </div>
+
+                        <div v-if="key == 'buttonText'" class="form-row">
+                            <label for="builder_el_o_btn_text" class="md-label">Button text</label>
+                            <input id="builder_el_o_btn_text" type="text" class="md-input" v-md-input v-model="currentElement.options[key]" />
+                        </div>
+
+                        <div v-if="key == 'url'" class="form-row">
+                            <label for="builder_el_o_url" class="md-label">URL</label>
+                            <input id="builder_el_o_url" type="url" class="md-input" v-md-input v-model="currentElement.options[key]" />
+                        </div>
+
+                        <div v-if="key == 'align'" class="form-row">
+                            <div class="md-btn-group">
+                                <button type="button" class="md-btn md-btn-flat" :class="{'md-btn-primary': option == 'left', 'md-btn-flat-primary': option != 'left'}" @click="currentElement.options[key] = 'left'">Left</button>
+                                <button type="button" class="md-btn md-btn-flat" :class="{'md-btn-primary': option == 'center', 'md-btn-flat-primary': option != 'center'}" @click="currentElement.options[key] = 'center'">Center</button>
+                                <button type="button" class="md-btn md-btn-flat" :class="{'md-btn-primary': option == 'right', 'md-btn-flat-primary': option != 'right'}" @click="currentElement.options[key] = 'right'">Right</button>
+                            </div>
+                        </div>
+
+                        <div v-if="['title', 'subTitle'].indexOf(key) > -1 || key.search('Link') > -1" class="form-row">
+                            <label :for="key" class="md-label">{{ key | makeTitle }}</label>
+                            <input :id="key" type="text" class="md-input" v-md-input v-model="currentElement.options[key]" />
+                        </div>
+
+                        <div v-if="key == 'padding'" class="form-row padding-inputs">
+                            <label for="builder_el_o_top" class="md-label">Top</label>
+                            <input id="builder_el_o_top" type="text" class="md-input" v-md-input v-model="currentElement.options[key][0]">
+
+                            <label for="builder_el_o_right" class="md-label">Right</label>
+                            <input id="builder_el_o_right" type="text" class="md-input" v-md-input v-model="currentElement.options[key][1]">
+
+                            <label for="builder_el_o_bottom" class="md-label">Bottom</label>
+                            <input id="builder_el_o_bottom" type="text" class="md-input" v-md-input v-model="currentElement.options[key][2]">
+
+                            <label for="builder_el_o_left" class="md-label">Left</label>
+                            <input id="builder_el_o_left" type="text" class="md-input" v-md-input v-model="currentElement.options[key][3]">
+                        </div>
+
+                        <div v-if="key == 'backgroundColor' || key == 'color' || key == 'buttonBackgroundColor'" class="form-row color-inputs">
+                            <label class="md-label" for="elementBackgroundColor" v-if="key == 'backgroundColor'">Background color</label>
+                            <label class="md-label" for="elementBackgroundColor" v-if="key == 'color'">Text color</label>
+                            <label class="md-label" for="elementBackgroundColor" v-if="key == 'buttonBackgroundColor'">Button background color</label>
+                            <input id="elementBackgroundColor" type="color" v-model="currentElement.options[key]" />
+                        </div>
+                    </div>
+                    <div v-if="currentElement.type && currentElement.type == 'emailSettings'">
+
+                        <div class="email-builder-element-edit-field">
+                            <div class="form-row padding-inputs">
+                                <label class="md-label" for="emailSettingsPaddingTop">Top</label>
+                                <input id="emailSettingsPaddingTop" class="md-input" type="text" v-md-input v-model="currentElement.options.paddingTop">
+                                <label class="md-label" for="emailSettingsPaddingLeft">Left</label>
+                                <input id="emailSettingsPaddingLeft" class="md-input" type="text" v-md-input v-model="currentElement.options.paddingLeft">
+                                <label class="md-label" for="emailSettingsPaddingBottom">Bottom</label>
+                                <input id="emailSettingsPaddingBottom" type="text" class="md-input" v-md-input v-model="currentElement.options.paddingBottom">
+                                <label class="md-label" for="emailSettingsPaddingRight">Right</label>
+                                <input id="emailSettingsPaddingRight" type="text" class="md-input" v-md-input v-model="currentElement.options.paddingRight">
+                            </div>
+                        </div>
+
+                        <div class="email-builder-element-edit-field">
+                            <div class="form-row color-inputs">
+                                <label class="md-label" for="emailSettingsBackground">Background color</label>
+                                <input id="emailSettingsBackground" type="color" v-model="currentElement.options.backgroundColor" />
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</transition>

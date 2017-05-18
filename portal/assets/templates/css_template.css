@@ -1,0 +1,16 @@
+body {
+	background-color: %s !important;
+	color: %s !important;
+}
+
+.bg-primary {
+	background-color: %s !important;
+}
+
+.navbar-inverse .navbar-nav .nav-link {
+	color: %s !important;
+}
+
+.navbar-inverse .nav-pills .nav-link {
+	color: %s !important;
+}

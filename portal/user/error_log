@@ -1,0 +1,21 @@
+[15-Mar-2017 09:16:00 America/Denver] PHP Notice:  A session had already been started - ignoring session_start() in /home2/rojectos/public_html/portal/user/password-reset.php on line 73
+[15-Mar-2017 09:16:00 America/Denver] PHP Notice:  Undefined variable: domainResult in /home2/rojectos/public_html/portal/user/password-reset.php on line 78
+[15-Mar-2017 09:16:17 America/Denver] PHP Notice:  A session had already been started - ignoring session_start() in /home2/rojectos/public_html/portal/user/login.php on line 214
+[15-Mar-2017 09:19:19 America/Denver] PHP Notice:  A session had already been started - ignoring session_start() in /home2/rojectos/public_html/portal/user/password-reset.php on line 73
+[15-Mar-2017 09:19:19 America/Denver] PHP Notice:  Undefined variable: domainResult in /home2/rojectos/public_html/portal/user/password-reset.php on line 78
+[15-Mar-2017 09:21:40 America/Denver] PHP Notice:  A session had already been started - ignoring session_start() in /home2/rojectos/public_html/portal/user/login.php on line 214
+[15-Mar-2017 10:21:51 America/Chicago] PHP Notice:  Undefined variable: strToName in /home2/rojectos/public_html/portal/user/invite-user.php on line 136
+[15-Mar-2017 10:21:51 America/Chicago] PHP Notice:  Undefined variable: output in /home2/rojectos/public_html/portal/user/invite-user.php on line 162
+[15-Mar-2017 09:22:28 America/Denver] PHP Notice:  A session had already been started - ignoring session_start() in /home2/rojectos/public_html/portal/user/accept-invite.php on line 75
+[15-Mar-2017 09:22:28 America/Denver] PHP Notice:  Undefined index: t1.id in /home2/rojectos/public_html/portal/user/accept-invite.php on line 76
+[15-Mar-2017 09:22:28 America/Denver] PHP Notice:  Undefined index: t2.id in /home2/rojectos/public_html/portal/user/accept-invite.php on line 80
+[15-Mar-2017 09:22:45 America/Denver] PHP Notice:  A session had already been started - ignoring session_start() in /home2/rojectos/public_html/portal/user/login.php on line 214
+[17-Mar-2017 10:19:16 America/Denver] PHP Notice:  A session had already been started - ignoring session_start() in /home2/rojectos/public_html/portal/user/login.php on line 214
+[17-Mar-2017 10:24:51 America/Denver] PHP Notice:  A session had already been started - ignoring session_start() in /home2/rojectos/public_html/portal/user/login.php on line 214
+[17-Mar-2017 10:27:03 America/Denver] PHP Notice:  A session had already been started - ignoring session_start() in /home2/rojectos/public_html/portal/user/login.php on line 214
+[17-Mar-2017 13:16:43 America/Denver] PHP Notice:  A session had already been started - ignoring session_start() in /home2/rojectos/public_html/portal/user/login.php on line 214
+[17-Mar-2017 13:40:22 America/Denver] PHP Notice:  A session had already been started - ignoring session_start() in /home2/rojectos/public_html/portal/user/login.php on line 214
+[17-Mar-2017 13:53:04 America/Denver] PHP Notice:  A session had already been started - ignoring session_start() in /home2/rojectos/public_html/portal/user/login.php on line 214
+[20-Mar-2017 08:24:31 America/Denver] PHP Parse error:  syntax error, unexpected ')' in /home2/rojectos/public_html/portal/user/register.php on line 53
+[20-Mar-2017 08:24:37 America/Denver] PHP Parse error:  syntax error, unexpected ')' in /home2/rojectos/public_html/portal/user/register.php on line 53
+[20-Mar-2017 08:25:15 America/Denver] PHP Parse error:  syntax error, unexpected ')' in /home2/rojectos/public_html/portal/user/register.php on line 53
